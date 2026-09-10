@@ -34,11 +34,14 @@ import android.os.vibrator.PrimitiveSegment;
 import android.os.vibrator.PwlePoint;
 import android.util.IndentingPrintWriter;
 import android.util.Slog;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 
 import libcore.util.NativeAllocationRegistry;
+import com.android.server.vibrator.RichTapVibratorService;
 
 /** Controls a single vibrator. */
 // TODO(b/409002423): remove this class once remove_hidl_support flag removed
@@ -49,6 +52,9 @@ final class VibratorController implements HalVibrator {
 
     @GuardedBy("mLock")
     private final NativeWrapper mNativeWrapper;
+    private final static boolean RICHTAP_TAKEOVER_CTL = true;
+    private static final int DEFAULT_PREBAKED_DURATION = 30;
+    private RichTapVibratorService mRichTapService;
 
     // Vibrator state listeners that support concurrent updates and broadcasts, but should lock
     // while broadcasting to guarantee delivery order.
@@ -64,6 +70,9 @@ final class VibratorController implements HalVibrator {
 
     VibratorController(int vibratorId) {
         this(vibratorId, new NativeWrapper());
+        if(RICHTAP_TAKEOVER_CTL){
+            mRichTapService = new RichTapVibratorService(true, null);
+        }
     }
 
     VibratorController(int vibratorId, NativeWrapper nativeWrapper) {
@@ -218,7 +227,11 @@ final class VibratorController implements HalVibrator {
         try {
             boolean success = false;
             synchronized (mLock) {
-                if (mVibratorInfo.hasCapability(IVibrator.CAP_AMPLITUDE_CONTROL)) {
+                if (RICHTAP_TAKEOVER_CTL) {
+                    int strength = (int)(amplitude * VibrationEffect.MAX_AMPLITUDE);
+                    mRichTapService.richTapVibratorSetAmplitude(strength);
+                    success = true;
+                } else if (mVibratorInfo.hasCapability(IVibrator.CAP_AMPLITUDE_CONTROL)) {
                     mNativeWrapper.setAmplitude(amplitude);
                     success = true;
                 }
@@ -237,11 +250,16 @@ final class VibratorController implements HalVibrator {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "HalVibrator.onMillis");
         try {
             synchronized (mLock) {
-                long duration = mNativeWrapper.on(milliseconds, vibrationId, stepId);
-                if (duration > 0) {
-                    updateStateAndNotifyListenersLocked(State.VIBRATING);
+                if (RICHTAP_TAKEOVER_CTL) {
+                    mRichTapService.richTapVibratorOn(milliseconds);
+                    return milliseconds;
+                } else {
+                    long duration = mNativeWrapper.on(milliseconds, vibrationId, stepId);
+                    if (duration > 0) {
+                        updateStateAndNotifyListenersLocked(State.VIBRATING);
+                    }
+                    return duration;
                 }
-                return duration;
             }
         } finally {
             Trace.traceEnd(TRACE_TAG_VIBRATOR);
@@ -275,12 +293,18 @@ final class VibratorController implements HalVibrator {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "HalVibrator.onPrebaked");
         try {
             synchronized (mLock) {
-                long duration = mNativeWrapper.perform(prebaked.getEffectId(),
-                        prebaked.getEffectStrength(), vibrationId, stepId);
-                if (duration > 0) {
-                    updateStateAndNotifyListenersLocked(State.VIBRATING);
+                if (RICHTAP_TAKEOVER_CTL) {
+                    mRichTapService.richTapVibratorPerform(
+                            prebaked.getEffectId(), (byte) prebaked.getEffectStrength());
+                    return DEFAULT_PREBAKED_DURATION;
+                } else {
+                    long duration = mNativeWrapper.perform(prebaked.getEffectId(),
+                            prebaked.getEffectStrength(), vibrationId, stepId);
+                    if (duration > 0) {
+                        updateStateAndNotifyListenersLocked(State.VIBRATING);
+                    }
+                    return duration;
                 }
-                return duration;
             }
         } finally {
             Trace.traceEnd(TRACE_TAG_VIBRATOR);

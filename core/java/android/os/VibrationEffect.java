@@ -54,6 +54,7 @@ import java.util.StringJoiner;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+import android.os.RichTapVibrationEffect;
 
 /**
  * A VibrationEffect describes a haptic effect to be performed by a {@link Vibrator}.
@@ -1974,7 +1975,11 @@ public abstract class VibrationEffect implements Parcelable {
             new Parcelable.Creator<VibrationEffect>() {
                 @Override
                 public VibrationEffect createFromParcel(Parcel in) {
-                    switch (in.readInt()) {
+                    int token = in.readInt();
+                    if (RichTapVibrationEffect.isExtendedEffect(token)) {
+                        return RichTapVibrationEffect.createExtendedEffect(in);
+                    }
+                    switch (token) {
                         case PARCEL_TOKEN_COMPOSED:
                             return new Composed(in);
                         case PARCEL_TOKEN_VENDOR_EFFECT:

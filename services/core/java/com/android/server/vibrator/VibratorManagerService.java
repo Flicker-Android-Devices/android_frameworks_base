@@ -116,6 +116,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+//add by AAC for RichTap support
+import com.android.server.vibrator.RichTapVibratorService;
+import com.android.server.vibrator.RichTapVibratorService.SenderId;
+import vendor.aac.hardware.richtap.vibrator.IRichtapVibrator;//aidl
+import vendor.aac.hardware.richtap.vibrator.IRichtapCallback;
+import android.hardware.vibrator.IVibratorCallback;
+import android.os.RichTapVibrationEffect;
+//end add by AAC
+
 /** System implementation of {@link IVibratorManagerService}. */
 @UsedByNative(
         description = "Called from JNI in jni/VibratorManagerService.cpp",
@@ -192,6 +201,28 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
     @GuardedBy("mLock")
     private boolean mServiceReady;
 
+    // add by AAC for Richtap support
+    private final static boolean RICHTAP_JAVA_TO_HIDL = true;
+    IRichtapCallback mRichtapAidlCallback = new RichtapCallback();
+
+    private final class RichtapCallback extends IRichtapCallback.Stub {
+        public void onCallback(int result) {
+            if (DEBUG){
+               Slog.d(TAG, " result:"+result);
+            }
+        }
+        public int getInterfaceVersion() {
+            Slog.d(TAG, "getInterfaceVersion");
+            return 1;
+        }
+        public String getInterfaceHash() {
+            Slog.d(TAG, "getInterfaceHash");
+            return "aac_richtap";
+        }
+    };
+    private RichTapVibratorService richTapService = new RichTapVibratorService(RICHTAP_JAVA_TO_HIDL, mRichtapAidlCallback);
+    //end modify by AAC
+
     @VisibleForTesting
     final VibrationSettings mVibrationSettings;
     private final VibrationConfig mVibrationConfig;
@@ -227,6 +258,18 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
                             VibratorManagerService.this::shouldCancelOnFgUserRequest,
                             Status.CANCELLED_BY_FOREGROUND_USER);
                 }
+            // add by AAC for Richtap support
+            } else if(intent.getAction().equals(RichTapVibratorService.ACTION_CHANGE_MODE)) {
+                int mode = intent.getIntExtra("mode", -1);
+                Slog.i(TAG, "richtap-mode, rec ACTION_CHANGE_MODE, mode:" + mode);
+                if ( -1 == mode || null == richTapService) {
+                    Slog.e(TAG, " invalid mode or status!");
+                    return;
+                }
+                synchronized (mLock) {
+                    richTapService.richTapSetVibrationMode(mode);
+                }
+            //end modify by AAC
             }
         }
     };
@@ -383,6 +426,11 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        // add by AAC for Richtap support
+        if (RICHTAP_JAVA_TO_HIDL) {
+            filter.addAction(RichTapVibratorService.ACTION_CHANGE_MODE);
+        }
+        //end modify by AAC
         if (UserManagerInternal.shouldShowNotificationForBackgroundUserSounds()) {
             filter.addAction(BackgroundUserSoundNotifier.ACTION_MUTE_SOUND);
         }
@@ -691,6 +739,11 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
             logAndRecordVibrationAttempt(effect, callerInfo, Status.IGNORED_INVALID_REQUEST);
             return null;
         }
+        // add by AAC for Richtap support
+        if(richTapService.disposeRichtapEffectParams(effect)) {
+            return null;
+        }
+        //end modify by AAC
         if (effect.hasVendorEffects()) {
             if (!hasPermission(android.Manifest.permission.VIBRATE_VENDOR_EFFECTS)) {
                 Slog.e(TAG, "vibrate; no permission for vendor effects");
@@ -1222,11 +1275,86 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
         }
     }
 
+    //add by AAC for Richtap support
+    private void doVibratorOnEnvelope(int[] relativeTime, int[] scaleArr, int[] freqArr, boolean steepMode, int amplitude, int uid, VibrationAttributes attrs) {
+        synchronized (richTapService) {
+            richTapService.richTapVibratorOnEnvelope(relativeTime, scaleArr, freqArr, steepMode, amplitude);
+        }
+    }
+
+    private long doVibratorOnPatternHe(VibrationEffect effect, int uid){
+        synchronized (richTapService){
+            richTapService.richTapVibratorOnPatternHe(effect);
+            return 0;
+        }
+    }
+
+    private void doStopVibrateLocked() {
+        synchronized (richTapService) {
+            if (DEBUG){
+                Slog.d(TAG, "time before vibratorStop : " + System.currentTimeMillis());
+            }
+            richTapService.richTapVibratorStop();
+            if (DEBUG){
+                Slog.d(TAG, "time after vibratorStop : " + System.currentTimeMillis());
+            }
+        }
+    }
+
+    @GuardedBy("mLock")
+    private long doVibratorOnExtPrebakedEffectLocked(VibrationEffect effect) {
+        Trace.traceBegin(Trace.TRACE_TAG_VIBRATOR, "doVibratorOnExtPrebakedEffectLocked");
+        try {
+            final RichTapVibrationEffect.ExtPrebaked prebaked = (RichTapVibrationEffect.ExtPrebaked) effect;
+            richTapService.richTapVibratorSetAmplitude(255);
+            richTapService.richTapVibratorPerform((int)prebaked.getId(), (byte)prebaked.getScale());
+            return 0;
+        } finally {
+            Trace.traceEnd(Trace.TRACE_TAG_VIBRATOR);
+        }
+    }
+    // end modify by AAC
+
     @GuardedBy("mLock")
     @Nullable
     private Status startVibrationLocked(SingleVibrationSession session) {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "startVibrationLocked");
         try {
+            //add by AAC for Richtap support
+            CombinedVibration combEffect = vib.getEffect();
+            if (combEffect instanceof CombinedVibration.Mono) {
+                VibrationEffect vibrEffect = ((CombinedVibration.Mono)combEffect).getEffect();
+                if (vibrEffect instanceof RichTapVibrationEffect.ExtPrebaked) {
+                    if(richTapService != null) {
+                        doVibratorOnExtPrebakedEffectLocked(vibrEffect);
+                        return Vibration.Status.RUNNING;
+                    } else {
+                        Slog.d(TAG, "richTapService is null or current is calling state, ignore current ExtPrebaked");
+                        return Vibration.Status.IGNORED_FOR_RINGTONE;
+                    }
+                } else if (vibrEffect instanceof RichTapVibrationEffect.Envelope) {
+                    if(richTapService != null){
+                        RichTapVibrationEffect.Envelope envelope = (RichTapVibrationEffect.Envelope) vibrEffect;
+                        doVibratorOnEnvelope(envelope.getRelativeTimeArr(), envelope.getScaleArr(), envelope.getFreqArr(),
+                                envelope.isSteepMode(), envelope.getAmplitude(), vib.uid, vib.attrs);
+                        return Vibration.Status.RUNNING;
+                    } else {
+                        Slog.d(TAG, "richTapService is null or current is calling state, ignore current Envelope");
+                        return Vibration.Status.IGNORED_FOR_RINGTONE;
+                    }
+                } else if (vibrEffect instanceof RichTapVibrationEffect.PatternHe) {
+                    if(richTapService != null){
+                        RichTapVibrationEffect.PatternHe patternHe = (RichTapVibrationEffect.PatternHe) vibrEffect;
+                        Slog.d(TAG, "vibratorservice play he");
+                        doVibratorOnPatternHe(patternHe, vib.uid);
+                        return Vibration.Status.RUNNING;
+                    }else{
+                        Slog.d(TAG, "richTapService is null or current is calling state, ignore current PatternHe");
+                        return Vibration.Status.IGNORED_FOR_RINGTONE;
+                    }
+                }
+            }
+            // end modify by AAC
             if (mInputDeviceDelegate.isAvailable()) {
                 return startVibrationOnInputDevicesLocked(session.getVibration());
             }
