@@ -1573,8 +1573,136 @@ UnflaggedApi: android.media.midi.MidiUmpDeviceService#onGetInputPortReceivers():
     New API must be flagged with @FlaggedApi: method android.media.midi.MidiUmpDeviceService.onGetInputPortReceivers()
 UnflaggedApi: android.os.Build.VERSION_CODES#VANILLA_ICE_CREAM:
     New API must be flagged with @FlaggedApi: field android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM
+UnflaggedApi: android.os.DynamicEffect#CREATOR:
+    New API must be flagged with @FlaggedApi: field android.os.DynamicEffect.CREATOR
+UnflaggedApi: android.os.DynamicEffect#DEBUG:
+    New API must be flagged with @FlaggedApi: field android.os.DynamicEffect.DEBUG
+UnflaggedApi: android.os.DynamicEffect#DynamicEffect(String):
+    New API must be flagged with @FlaggedApi: constructor android.os.DynamicEffect(String)
+UnflaggedApi: android.os.DynamicEffect#create(String):
+    New API must be flagged with @FlaggedApi: method android.os.DynamicEffect.create(String)
+UnflaggedApi: android.os.DynamicEffect#getDuration():
+    New API must be flagged with @FlaggedApi: method android.os.DynamicEffect.getDuration()
+UnflaggedApi: android.os.DynamicEffect#getPatternInfo():
+    New API must be flagged with @FlaggedApi: method android.os.DynamicEffect.getPatternInfo()
+UnflaggedApi: android.os.DynamicEffect#validate():
+    New API must be flagged with @FlaggedApi: method android.os.DynamicEffect.validate()
+UnflaggedApi: android.os.DynamicEffect#writeToParcel(android.os.Parcel, int):
+    New API must be flagged with @FlaggedApi: method android.os.DynamicEffect.writeToParcel(android.os.Parcel,int)
+UnflaggedApi: android.os.HapticPlayer#ANDROID_VERSIONCODE_O:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.ANDROID_VERSIONCODE_O
+UnflaggedApi: android.os.HapticPlayer#CONTINUOUS_EVENT:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.CONTINUOUS_EVENT
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_DURATION:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_DURATION
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_EVENT:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_EVENT
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_HE_CURVE:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_HE_CURVE
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_HE_CURVE_POINT_TIME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_HE_CURVE_POINT_TIME
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_HE_FREQUENCY:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_HE_FREQUENCY
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_HE_INTENSITY:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_HE_INTENSITY
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_HE_PARAMETERS:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_HE_PARAMETERS
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_HE_TYPE:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_HE_TYPE
+UnflaggedApi: android.os.HapticPlayer#EVENT_KEY_RELATIVE_TIME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_KEY_RELATIVE_TIME
+UnflaggedApi: android.os.HapticPlayer#EVENT_TYPE_HE_CONTINUOUS_NAME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_TYPE_HE_CONTINUOUS_NAME
+UnflaggedApi: android.os.HapticPlayer#EVENT_TYPE_HE_TRANSIENT_NAME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.EVENT_TYPE_HE_TRANSIENT_NAME
+UnflaggedApi: android.os.HapticPlayer#FORMAT_VERSION:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.FORMAT_VERSION
+UnflaggedApi: android.os.HapticPlayer#HE2_0_PATTERN_WRAP_NUM:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE2_0_PATTERN_WRAP_NUM
+UnflaggedApi: android.os.HapticPlayer#HE_CURVE_POINT_0_FREQUENCY:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_CURVE_POINT_0_FREQUENCY
+UnflaggedApi: android.os.HapticPlayer#HE_CURVE_POINT_0_INTENSITY:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_CURVE_POINT_0_INTENSITY
+UnflaggedApi: android.os.HapticPlayer#HE_CURVE_POINT_0_TIME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_CURVE_POINT_0_TIME
+UnflaggedApi: android.os.HapticPlayer#HE_DEFAULT_DURATION:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_DEFAULT_DURATION
+UnflaggedApi: android.os.HapticPlayer#HE_DEFAULT_RELATIVE_TIME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_DEFAULT_RELATIVE_TIME
+UnflaggedApi: android.os.HapticPlayer#HE_DURATION:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_DURATION
+UnflaggedApi: android.os.HapticPlayer#HE_FREQUENCY:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_FREQUENCY
+UnflaggedApi: android.os.HapticPlayer#HE_INTENSITY:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_INTENSITY
+UnflaggedApi: android.os.HapticPlayer#HE_POINT_COUNT:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_POINT_COUNT
+UnflaggedApi: android.os.HapticPlayer#HE_RELATIVE_TIME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_RELATIVE_TIME
+UnflaggedApi: android.os.HapticPlayer#HE_TYPE:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_TYPE
+UnflaggedApi: android.os.HapticPlayer#HE_VALUE_LENGTH:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_VALUE_LENGTH
+UnflaggedApi: android.os.HapticPlayer#HE_VIB_INDEX:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.HE_VIB_INDEX
+UnflaggedApi: android.os.HapticPlayer#HapticPlayer(android.os.DynamicEffect):
+    New API must be flagged with @FlaggedApi: constructor android.os.HapticPlayer(android.os.DynamicEffect)
+UnflaggedApi: android.os.HapticPlayer#PATTERN_KEY_EVENT_VIB_ID:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.PATTERN_KEY_EVENT_VIB_ID
+UnflaggedApi: android.os.HapticPlayer#PATTERN_KEY_PATTERN:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.PATTERN_KEY_PATTERN
+UnflaggedApi: android.os.HapticPlayer#PATTERN_KEY_PATTERN_ABS_TIME:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.PATTERN_KEY_PATTERN_ABS_TIME
+UnflaggedApi: android.os.HapticPlayer#TRANSIENT_EVENT:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.TRANSIENT_EVENT
+UnflaggedApi: android.os.HapticPlayer#VIBRATE_REASON:
+    New API must be flagged with @FlaggedApi: field android.os.HapticPlayer.VIBRATE_REASON
+UnflaggedApi: android.os.HapticPlayer#applyPatternHeParam(int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.applyPatternHeParam(int,int,int)
+UnflaggedApi: android.os.HapticPlayer#applyPatternHeWithString(String, int, int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.applyPatternHeWithString(String,int,int,int,int)
+UnflaggedApi: android.os.HapticPlayer#getMajorVersion():
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.getMajorVersion()
+UnflaggedApi: android.os.HapticPlayer#getMinorVersion():
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.getMinorVersion()
+UnflaggedApi: android.os.HapticPlayer#getRealLooper(int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.getRealLooper(int)
+UnflaggedApi: android.os.HapticPlayer#isAvailable():
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.isAvailable()
+UnflaggedApi: android.os.HapticPlayer#start(int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.start(int)
+UnflaggedApi: android.os.HapticPlayer#start(int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.start(int,int,int)
+UnflaggedApi: android.os.HapticPlayer#start(int, int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.start(int,int,int,int)
+UnflaggedApi: android.os.HapticPlayer#stop():
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.stop()
+UnflaggedApi: android.os.HapticPlayer#updateAmplitude(int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.updateAmplitude(int)
+UnflaggedApi: android.os.HapticPlayer#updateFrequency(int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.updateFrequency(int)
+UnflaggedApi: android.os.HapticPlayer#updateInterval(int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.updateInterval(int)
+UnflaggedApi: android.os.HapticPlayer#updateParameter(int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.HapticPlayer.updateParameter(int,int,int)
 UnflaggedApi: android.os.PerformanceHintManager.Session#setPreferPowerEfficiency(boolean):
     New API must be flagged with @FlaggedApi: method android.os.PerformanceHintManager.Session.setPreferPowerEfficiency(boolean)
+UnflaggedApi: android.os.RichTapVibrationEffect#CREATOR:
+    New API must be flagged with @FlaggedApi: field android.os.RichTapVibrationEffect.CREATOR
+UnflaggedApi: android.os.RichTapVibrationEffect#checkIfRichTapSupport():
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.checkIfRichTapSupport()
+UnflaggedApi: android.os.RichTapVibrationEffect#createEnvelope(int[], int[], int[], boolean, int):
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.createEnvelope(int[],int[],int[],boolean,int)
+UnflaggedApi: android.os.RichTapVibrationEffect#createExtPreBaked(int, int):
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.createExtPreBaked(int,int)
+UnflaggedApi: android.os.RichTapVibrationEffect#createExtendedEffect(android.os.Parcel):
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.createExtendedEffect(android.os.Parcel)
+UnflaggedApi: android.os.RichTapVibrationEffect#createHapticParameter(int[], int):
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.createHapticParameter(int[],int)
+UnflaggedApi: android.os.RichTapVibrationEffect#createPatternHeParameter(int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.createPatternHeParameter(int,int,int)
+UnflaggedApi: android.os.RichTapVibrationEffect#createPatternHeWithParam(int[], int, int, int, int):
+    New API must be flagged with @FlaggedApi: method android.os.RichTapVibrationEffect.createPatternHeWithParam(int[],int,int,int,int)
 UnflaggedApi: android.os.UserManager#DISALLOW_NEAR_FIELD_COMMUNICATION_RADIO:
     New API must be flagged with @FlaggedApi: field android.os.UserManager.DISALLOW_NEAR_FIELD_COMMUNICATION_RADIO
 UnflaggedApi: android.provider.Settings#ACTION_CREDENTIAL_PROVIDER:

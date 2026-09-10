@@ -17,6 +17,7 @@
 package android.os;
 
 import android.annotation.NonNull;
+import android.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import android.os.VibrationEffect;
  * These effects may be any number of things, from single shot vibrations to complex waveforms, and to AAC extended effects.
  *
  */
+@android.annotation.SuppressLint("UnflaggedApi")
 public class RichTapVibrationEffect {
     private static final String TAG = "RichTapVibrationEffect";
 
@@ -133,7 +135,58 @@ public class RichTapVibrationEffect {
     }
 
     /** @hide */
-    public static final class ExtPrebaked extends VibrationEffect implements Parcelable {
+    public abstract static class BaseRichTapEffect extends VibrationEffect implements Parcelable {
+        /** @hide */
+        @Nullable
+        @Override
+        public long[] computeCreateWaveformOffOnTimingsOrNull() {
+            return null;
+        }
+
+        /** @hide */
+        @Nullable
+        @Override
+        public VibrationEffect cropToLengthOrNull(int length) {
+            return null;
+        }
+
+        /** @hide */
+        @Override
+        public boolean areVibrationFeaturesSupported(@NonNull VibratorInfo vibratorInfo) {
+            return true;
+        }
+
+        /** @hide */
+        @NonNull
+        @Override
+        public VibrationEffect applyEffectStrength(int effectStrength) {
+            return this;
+        }
+
+        /** @hide */
+        @NonNull
+        @Override
+        public VibrationEffect applyAdaptiveScale(float scaleFactor) {
+            return this;
+        }
+
+        /** @hide */
+        @NonNull
+        @Override
+        public VibrationEffect applyRepeatingIndefinitely(boolean wantRepeating, int loopDelayMs) {
+            return this;
+        }
+
+        /** @hide */
+        @NonNull
+        @Override
+        public String toDebugString() {
+            return toString();
+        }
+    }
+
+    /** @hide */
+    public static final class ExtPrebaked extends BaseRichTapEffect implements Parcelable {
         private int mEffectId;
         private int mStrength;
 
@@ -228,7 +281,7 @@ public class RichTapVibrationEffect {
                 };
     }
     /** @hide */
-    public static final class Envelope extends VibrationEffect implements Parcelable {
+    public static final class Envelope extends BaseRichTapEffect implements Parcelable {
         private int[] relativeTimeArr;
         private int[] scaleArr; // *100
         private int[] freqArr; // freq
@@ -365,7 +418,7 @@ public class RichTapVibrationEffect {
                 };
     }
     /** @hide */
-    public static final class PatternHeParameter extends VibrationEffect implements Parcelable{
+    public static final class PatternHeParameter extends BaseRichTapEffect implements Parcelable{
         private final String TAG = "PatternHeParameter";
         private int mInterval;
         private int mAmplitude;
@@ -481,7 +534,7 @@ public class RichTapVibrationEffect {
     }
 
     /** @hide */
-    public static final class HapticParameter extends VibrationEffect implements Parcelable{
+    public static final class HapticParameter extends BaseRichTapEffect implements Parcelable{
         private final String TAG = "HapticParameter";
         private int[] mParam;
         private int mLength;
@@ -583,7 +636,7 @@ public class RichTapVibrationEffect {
 
 
     /** @hide */
-    public static final class PatternHe extends VibrationEffect implements Parcelable {
+    public static final class PatternHe extends BaseRichTapEffect implements Parcelable {
         private int[] mPatternInfo;
         private int mLooper;
         private int mInterval;

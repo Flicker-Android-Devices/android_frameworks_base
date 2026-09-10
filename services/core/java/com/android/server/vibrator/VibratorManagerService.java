@@ -1321,36 +1321,37 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "startVibrationLocked");
         try {
             //add by AAC for Richtap support
-            CombinedVibration combEffect = vib.getEffect();
+            HalVibration vib = session.getVibration();
+            CombinedVibration combEffect = vib.getEffectToPlay();
             if (combEffect instanceof CombinedVibration.Mono) {
                 VibrationEffect vibrEffect = ((CombinedVibration.Mono)combEffect).getEffect();
                 if (vibrEffect instanceof RichTapVibrationEffect.ExtPrebaked) {
                     if(richTapService != null) {
                         doVibratorOnExtPrebakedEffectLocked(vibrEffect);
-                        return Vibration.Status.RUNNING;
+                        return Status.RUNNING;
                     } else {
                         Slog.d(TAG, "richTapService is null or current is calling state, ignore current ExtPrebaked");
-                        return Vibration.Status.IGNORED_FOR_RINGTONE;
+                        return Status.IGNORED_UNSUPPORTED;
                     }
                 } else if (vibrEffect instanceof RichTapVibrationEffect.Envelope) {
                     if(richTapService != null){
                         RichTapVibrationEffect.Envelope envelope = (RichTapVibrationEffect.Envelope) vibrEffect;
                         doVibratorOnEnvelope(envelope.getRelativeTimeArr(), envelope.getScaleArr(), envelope.getFreqArr(),
-                                envelope.isSteepMode(), envelope.getAmplitude(), vib.uid, vib.attrs);
-                        return Vibration.Status.RUNNING;
+                                envelope.isSteepMode(), envelope.getAmplitude(), vib.callerInfo.uid, vib.callerInfo.attrs);
+                        return Status.RUNNING;
                     } else {
                         Slog.d(TAG, "richTapService is null or current is calling state, ignore current Envelope");
-                        return Vibration.Status.IGNORED_FOR_RINGTONE;
+                        return Status.IGNORED_UNSUPPORTED;
                     }
                 } else if (vibrEffect instanceof RichTapVibrationEffect.PatternHe) {
                     if(richTapService != null){
                         RichTapVibrationEffect.PatternHe patternHe = (RichTapVibrationEffect.PatternHe) vibrEffect;
                         Slog.d(TAG, "vibratorservice play he");
-                        doVibratorOnPatternHe(patternHe, vib.uid);
-                        return Vibration.Status.RUNNING;
+                        doVibratorOnPatternHe(patternHe, vib.callerInfo.uid);
+                        return Status.RUNNING;
                     }else{
                         Slog.d(TAG, "richTapService is null or current is calling state, ignore current PatternHe");
-                        return Vibration.Status.IGNORED_FOR_RINGTONE;
+                        return Status.IGNORED_UNSUPPORTED;
                     }
                 }
             }

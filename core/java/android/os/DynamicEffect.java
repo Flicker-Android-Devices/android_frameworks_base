@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  *
  */
+@android.annotation.SuppressLint("UnflaggedApi")
 public final class DynamicEffect extends VibrationEffect implements Parcelable {
     private static final String TAG = "DynamicEffect";
 
@@ -79,6 +80,8 @@ public final class DynamicEffect extends VibrationEffect implements Parcelable {
      *
      * @hide
      */
+    @NonNull
+    @Override
     public DynamicEffect resolve(int defaultAmplitude) {
         return this;
     }
@@ -93,6 +96,8 @@ public final class DynamicEffect extends VibrationEffect implements Parcelable {
      *
      * @hide
      */
+    @NonNull
+    @Override
     public DynamicEffect scale(float scaleFactor) {
         return this;
     }
@@ -127,6 +132,55 @@ public final class DynamicEffect extends VibrationEffect implements Parcelable {
     public long getDuration() {
         return 0;
     }
+
+    /** @hide */
+    @Nullable
+    @Override
+    public long[] computeCreateWaveformOffOnTimingsOrNull() {
+        return null;
+    }
+
+    /** @hide */
+    @Nullable
+    @Override
+    public VibrationEffect cropToLengthOrNull(int length) {
+        return null;
+    }
+
+    /** @hide */
+    @Override
+    public boolean areVibrationFeaturesSupported(@NonNull VibratorInfo vibratorInfo) {
+        return true;
+    }
+
+    /** @hide */
+    @NonNull
+    @Override
+    public DynamicEffect applyEffectStrength(int effectStrength) {
+        return this;
+    }
+
+    /** @hide */
+    @NonNull
+    @Override
+    public DynamicEffect applyAdaptiveScale(float scaleFactor) {
+        return this;
+    }
+
+    /** @hide */
+    @NonNull
+    @Override
+    public DynamicEffect applyRepeatingIndefinitely(boolean wantRepeating, int loopDelayMs) {
+        return this;
+    }
+
+    /** @hide */
+    @NonNull
+    @Override
+    public String toDebugString() {
+        return toString();
+    }
+
     @Override
     public String toString() {
         return "DynamicEffect{mPatternJson=" +  mPatternJson+"}";

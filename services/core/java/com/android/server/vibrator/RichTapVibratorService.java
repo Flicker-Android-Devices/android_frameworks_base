@@ -23,7 +23,6 @@ import vendor.aac.hardware.richtap.vibrator.IRichtapCallback;
 import android.os.RichTapVibrationEffect;
 import android.telephony.TelephonyManager;
 import android.os.Binder;
-import android.hardware.vibrator.V1_0.EffectStrength;
 
 
 public class RichTapVibratorService {
@@ -245,13 +244,13 @@ public class RichTapVibratorService {
 
         int strength = 0;
         switch (effectStrength) {
-            case EffectStrength.LIGHT:
+            case VibrationEffect.EFFECT_STRENGTH_LIGHT:
                 strength = 69;
                 break;
-            case EffectStrength.MEDIUM:
+            case VibrationEffect.EFFECT_STRENGTH_MEDIUM:
                 strength = 89;
                 break;
-            case EffectStrength.STRONG:
+            case VibrationEffect.EFFECT_STRENGTH_STRONG:
                 strength = 99;
                 break;
             default:

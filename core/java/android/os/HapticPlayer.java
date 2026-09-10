@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-@SuppressLint("NotCloseable")
+@SuppressLint({"NotCloseable", "UnflaggedApi"})
 public class HapticPlayer {
     private static final String TAG = "HapticPlayer";
 
