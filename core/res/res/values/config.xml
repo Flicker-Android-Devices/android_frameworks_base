@@ -4623,6 +4623,9 @@
          A vibrating device may move out of alignment with the charging pad. -->
     <bool name="config_ignoreVibrationsOnWirelessCharger">false</bool>
 
+    <!-- Whether the device supports AAC RichTap haptics feature -->
+    <bool name="config_hasRichtapSupport">false</bool>
+
     <!-- Number of retries Cell Data should attempt for a given error code before
          restarting the modem.
          Error codes not listed will not lead to modem restarts.

@@ -95,6 +95,14 @@ public class RichTapVibratorService {
         this.mCallback = callback;
     }
 
+    public boolean isSupported() {
+        return mSupportRichTap;
+    }
+
+    public boolean isServiceAvailable() {
+        return mSupportRichTap && (getRichtapService() != null);
+    }
+
     /*
      * dispose call state, if not idle, should stop richtap effect loop.
      * return false if call state is not in offhook or ringing

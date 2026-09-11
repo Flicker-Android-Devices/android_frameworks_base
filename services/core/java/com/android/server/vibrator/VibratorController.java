@@ -40,6 +40,8 @@ import java.util.Map;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 
+import android.app.ActivityThread;
+import android.content.Context;
 import libcore.util.NativeAllocationRegistry;
 import com.android.server.vibrator.RichTapVibratorService;
 
@@ -52,7 +54,7 @@ final class VibratorController implements HalVibrator {
 
     @GuardedBy("mLock")
     private final NativeWrapper mNativeWrapper;
-    private final static boolean RICHTAP_TAKEOVER_CTL = true;
+    private final boolean mRichTapSupported;
     private static final int DEFAULT_PREBAKED_DURATION = 30;
     private RichTapVibratorService mRichTapService;
 
@@ -70,15 +72,19 @@ final class VibratorController implements HalVibrator {
 
     VibratorController(int vibratorId) {
         this(vibratorId, new NativeWrapper());
-        if(RICHTAP_TAKEOVER_CTL){
-            mRichTapService = new RichTapVibratorService(true, null);
-        }
     }
 
     VibratorController(int vibratorId, NativeWrapper nativeWrapper) {
         mNativeWrapper = nativeWrapper;
         mVibratorInfo = new VibratorInfo.Builder(vibratorId).build();
         mCurrentState = State.IDLE;
+        Context context = ActivityThread.currentActivityThread() != null
+                ? ActivityThread.currentActivityThread().getSystemContext() : null;
+        mRichTapSupported = (context != null) && context.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasRichtapSupport);
+        if (mRichTapSupported) {
+            mRichTapService = new RichTapVibratorService(true, null);
+        }
     }
 
     @Override
@@ -227,7 +233,7 @@ final class VibratorController implements HalVibrator {
         try {
             boolean success = false;
             synchronized (mLock) {
-                if (RICHTAP_TAKEOVER_CTL) {
+                if (mRichTapSupported && mRichTapService != null && mRichTapService.isServiceAvailable()) {
                     int strength = (int)(amplitude * VibrationEffect.MAX_AMPLITUDE);
                     mRichTapService.richTapVibratorSetAmplitude(strength);
                     success = true;
@@ -250,7 +256,7 @@ final class VibratorController implements HalVibrator {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "HalVibrator.onMillis");
         try {
             synchronized (mLock) {
-                if (RICHTAP_TAKEOVER_CTL) {
+                if (mRichTapSupported && mRichTapService != null && mRichTapService.isServiceAvailable()) {
                     mRichTapService.richTapVibratorOn(milliseconds);
                     return milliseconds;
                 } else {
@@ -293,10 +299,10 @@ final class VibratorController implements HalVibrator {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "HalVibrator.onPrebaked");
         try {
             synchronized (mLock) {
-                if (RICHTAP_TAKEOVER_CTL) {
-                    mRichTapService.richTapVibratorPerform(
+                if (mRichTapSupported && mRichTapService != null && mRichTapService.isServiceAvailable()) {
+                    int timeout = mRichTapService.richTapVibratorPerform(
                             prebaked.getEffectId(), (byte) prebaked.getEffectStrength());
-                    return DEFAULT_PREBAKED_DURATION;
+                    return timeout > 0 ? timeout : DEFAULT_PREBAKED_DURATION;
                 } else {
                     long duration = mNativeWrapper.perform(prebaked.getEffectId(),
                             prebaked.getEffectStrength(), vibrationId, stepId);
@@ -354,6 +360,9 @@ final class VibratorController implements HalVibrator {
         Trace.traceBegin(TRACE_TAG_VIBRATOR, "HalVibrator.off");
         try {
             synchronized (mLock) {
+                if (mRichTapSupported && mRichTapService != null && mRichTapService.isServiceAvailable()) {
+                    mRichTapService.richTapVibratorOff();
+                }
                 mNativeWrapper.off();
                 updateStateAndNotifyListenersLocked(State.IDLE);
             }

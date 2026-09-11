@@ -31,7 +31,6 @@ public class HapticPlayer {
     private final VibratorManager mVibratorManager;
     private final String mPackageName;
     private final Binder mToken;
-    private static boolean mAvailable = isSupportRichtap();
     private static ExecutorService mExcutor = Executors.newSingleThreadExecutor();
     private static AtomicInteger mSeq = new AtomicInteger();
 
@@ -127,7 +126,7 @@ public class HapticPlayer {
     }
 
     public static boolean isAvailable() {
-        return mAvailable;
+        return isSupportRichtap();
     }
 
     public static int getMajorVersion() {
@@ -567,7 +566,7 @@ public class HapticPlayer {
             JSONObject hapticObject = new JSONObject(patternString);
 
             int heVersion = 0;
-            if(mAvailable) {
+            if (isAvailable()) {
                 JSONObject metaData = hapticObject.getJSONObject(HE_META_DATA_KEY);
                 heVersion = metaData.getInt(HE_VERSION_KEY);
                 int richTapMajorVersion = getMajorVersion();
@@ -638,6 +637,10 @@ public class HapticPlayer {
     }
     public void start(final int loop) {
         Log.d(TAG, "start play pattern loop:"+loop);
+        if (!isAvailable()) {
+            Log.w(TAG, "RichTap is not supported or disabled on this device");
+            return;
+        }
         if(mEffect == null){
             Log.e(TAG, "effect is null,do nothing");
             return;
@@ -682,6 +685,10 @@ public class HapticPlayer {
      */
     public void start(final int loop, final int interval, final int amplitude) {
         Log.d(TAG, "start with loop:"+ loop+" interval:"+interval+" amplitude:"+amplitude);
+        if (!isAvailable()) {
+            Log.w(TAG, "RichTap is not supported or disabled on this device");
+            return;
+        }
         boolean checkResult = checkParam(interval,amplitude, -1);
         
         if(!checkResult){
@@ -735,6 +742,10 @@ public class HapticPlayer {
      */
     public void start(final int loop, final int interval, final int amplitude, final int freq) {
         Log.d(TAG, "start with loop:"+ loop+" interval:"+interval+" amplitude:"+amplitude + " freq:"+freq);
+        if (!isAvailable()) {
+            Log.w(TAG, "RichTap is not supported or disabled on this device");
+            return;
+        }
         boolean checkResult = checkParam(interval, amplitude, freq);
         
         if(!checkResult){

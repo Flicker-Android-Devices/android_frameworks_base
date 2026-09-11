@@ -2262,6 +2262,7 @@
   <java-symbol type="array" name="config_ringtoneVibrationPatternToMetricIdMapping" />
   <java-symbol type="array" name="config_notificationVibrationPatternToMetricIdMapping" />
   <java-symbol type="bool" name="config_ignoreVibrationsOnWirelessCharger" />
+  <java-symbol type="bool" name="config_hasRichtapSupport" />
   <java-symbol type="integer" name="config_vibrationWaveformRampDownDuration" />
   <java-symbol type="integer" name="config_vibrationPipelineMaxDuration" />
   <java-symbol type="integer" name="config_radioScanningTimeout" />

@@ -120,17 +120,16 @@ public class RichTapVibrationEffect {
     }
 
     /*
-    * NEED MODIFY ON CUSTOM BRANCH
+    * Gated by device overlay: config_hasRichtapSupport
     */
     public static int checkIfRichTapSupport(){
-        //final String value = SystemProperties.get("ro.build.product", "no-name" /* default */);
-        boolean support = true; //FIXME
-        //Log.d("RichTap", "check vibrator feature RichTap support or not:" + support);
-        /*if(support){
-            return VIBRATION_EFFECT_SUPPORT_YES;
-        }else{
+        android.app.ActivityThread at = android.app.ActivityThread.currentActivityThread();
+        android.content.Context context = (at != null) ? at.getSystemContext() : null;
+        boolean support = (context != null) && context.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasRichtapSupport);
+        if (!support) {
             return VIBRATION_EFFECT_SUPPORT_NO;
-        }*/
+        }
         return (AAC_CLIENT | MAJOR_RICHTAP_VERSION | MINOR_RICHTAP_VERSION);//richtap version:1.6.1.0   client:aac
     }
 

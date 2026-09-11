@@ -202,8 +202,8 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
     private boolean mServiceReady;
 
     // add by AAC for Richtap support
-    private final static boolean RICHTAP_JAVA_TO_HIDL = true;
-    IRichtapCallback mRichtapAidlCallback = new RichtapCallback();
+    private final boolean mIsRichTapSupported;
+    private final IRichtapCallback mRichtapAidlCallback = new RichtapCallback();
 
     private final class RichtapCallback extends IRichtapCallback.Stub {
         public void onCallback(int result) {
@@ -220,7 +220,7 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
             return "aac_richtap";
         }
     };
-    private RichTapVibratorService richTapService = new RichTapVibratorService(RICHTAP_JAVA_TO_HIDL, mRichtapAidlCallback);
+    private RichTapVibratorService richTapService;
     //end modify by AAC
 
     @VisibleForTesting
@@ -259,10 +259,10 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
                             Status.CANCELLED_BY_FOREGROUND_USER);
                 }
             // add by AAC for Richtap support
-            } else if(intent.getAction().equals(RichTapVibratorService.ACTION_CHANGE_MODE)) {
+            } else if (mIsRichTapSupported && intent.getAction().equals(RichTapVibratorService.ACTION_CHANGE_MODE)) {
                 int mode = intent.getIntExtra("mode", -1);
                 Slog.i(TAG, "richtap-mode, rec ACTION_CHANGE_MODE, mode:" + mode);
-                if ( -1 == mode || null == richTapService) {
+                if (-1 == mode || null == richTapService) {
                     Slog.e(TAG, " invalid mode or status!");
                     return;
                 }
@@ -378,6 +378,13 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
         mFrameworkStatsLogger = injector.getFrameworkStatsLogger(mHandler);
 
         mVibrationConfig = new VibrationConfig(context.getResources());
+        mIsRichTapSupported = context.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasRichtapSupport);
+        if (mIsRichTapSupported) {
+            richTapService = new RichTapVibratorService(true, mRichtapAidlCallback);
+        } else {
+            richTapService = null;
+        }
         mVibrationSettings = new VibrationSettings(mContext, mHandler, mVibrationConfig);
         mVibrationScaler = new VibrationScaler(mVibrationConfig, mVibrationSettings);
         mVibratorControlService = new VibratorControlService(mContext,
@@ -427,7 +434,7 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         // add by AAC for Richtap support
-        if (RICHTAP_JAVA_TO_HIDL) {
+        if (mIsRichTapSupported) {
             filter.addAction(RichTapVibratorService.ACTION_CHANGE_MODE);
         }
         //end modify by AAC
@@ -740,7 +747,7 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
             return null;
         }
         // add by AAC for Richtap support
-        if(richTapService.disposeRichtapEffectParams(effect)) {
+        if (mIsRichTapSupported && richTapService != null && richTapService.disposeRichtapEffectParams(effect)) {
             return null;
         }
         //end modify by AAC
@@ -1323,7 +1330,7 @@ public class VibratorManagerService extends IVibratorManagerService.Stub {
             //add by AAC for Richtap support
             HalVibration vib = session.getVibration();
             CombinedVibration combEffect = vib.getEffectToPlay();
-            if (combEffect instanceof CombinedVibration.Mono) {
+            if (mIsRichTapSupported && richTapService != null && combEffect instanceof CombinedVibration.Mono) {
                 VibrationEffect vibrEffect = ((CombinedVibration.Mono)combEffect).getEffect();
                 if (vibrEffect instanceof RichTapVibrationEffect.ExtPrebaked) {
                     if(richTapService != null) {
